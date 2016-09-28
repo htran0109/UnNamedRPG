@@ -1,0 +1,4 @@
+sceneSetups:
+- path: Assets/CombatScene.unity
+  isLoaded: 1
+  isActive: 1
