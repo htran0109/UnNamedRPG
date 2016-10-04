@@ -15,12 +15,19 @@ public class CombatSelector : MonoBehaviour {
     private int horizPos = 0;
     private int vertPos = 0;
     private bool playerSide = true;
+    private PlayerGrid playerGridSelect = null;
+    private Player playerSelected = null;
+    private EnemyGrid enemyGridSelect = null;
+    private Enemy enemySelected = null;
+    private CombatArea combatArea;
     // Use this for initialization
     void Start () {
         transform.position = new Vector3(-START_DIVIDE_PLAYER, TILE_SPACE);
         horizPos = 0;
         vertPos = 0;
         playerSide = true;
+        playerSelected = null;
+        combatArea = GameObject.Find("CombatArea").GetComponent<CombatArea>();
 	}
 	
 	// Update is called once per frame
@@ -74,6 +81,44 @@ public class CombatSelector : MonoBehaviour {
                                                 0, 0));
                 playerSide = false;
                 horizPos = LEFT_HORIZ;
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            if(playerSide && playerSelected == null)
+            {
+                playerGridSelect = combatArea.findPlayerGrid(horizPos, vertPos);
+                if (playerGridSelect.occupied!=0)
+                {
+                    playerSelected = playerGridSelect.playersOnTile[0];
+                }
+            }
+            else if(playerSide && playerSelected != null)
+            {
+                playerGridSelect = combatArea.findPlayerGrid(horizPos, vertPos);
+                playerSelected.moveTile(playerGridSelect);
+                combatArea.deletePhysGrid();
+                combatArea.buildPhysGrid();
+                playerSelected = null;
+            }
+            else if(!playerSide && playerSelected ==null)
+            {
+                enemyGridSelect = combatArea.findEnemyGrid(horizPos, vertPos);
+                if(enemyGridSelect.occupied!=0)
+                {
+                    enemySelected = enemyGridSelect.enemiesOnTile[0];
+                }
+                //TODO: run examine or something on enemy select
+            }
+            else if(!playerSide && playerSelected != null)
+            {
+                enemyGridSelect = combatArea.findEnemyGrid(horizPos, vertPos);
+                if(enemyGridSelect.occupied!=0)
+                {
+                    enemySelected = enemyGridSelect.enemiesOnTile[0];
+                    playerSelected.hitEnemyRegular(enemySelected);
+                }
+                playerSelected = null;
             }
         }
     }

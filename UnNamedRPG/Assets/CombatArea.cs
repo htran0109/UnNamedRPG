@@ -51,7 +51,18 @@ public class CombatArea : MonoBehaviour {
     {
         firstPlayer = new GenericPlayer(1, 0, 1, 1);
     }
+    public void deletePhysGrid()
+    {
+        for(int i = 0; i < sizeOfGrids; i++)
+        {
+            for(int j = 0; j < sizeOfGrids; j++)
+            {
+                Object.Destroy(GameObject.Find("playerTile" + i + j));
+                Object.Destroy(GameObject.Find("enemyTile" + i + j));
+            }
+        }
 
+    }
     public void buildPhysGrid()
     {
         //show visuals for the combat
@@ -64,14 +75,18 @@ public class CombatArea : MonoBehaviour {
                 if(findPlayerGrid(i,j).occupied == 0)
                 {
                     //instantiate empty tile
-                    Instantiate(playerTile, new Vector3(-START_DIVIDE_PLAYER + 
+                    Object obj = 
+                        Instantiate(playerTile, new Vector3(-START_DIVIDE_PLAYER + 
                         i * TILE_SPACE,(1-j)*TILE_SPACE,0),Quaternion.identity);
+                    obj.name = "playerTile" + i + j;
                 }
                 else
                 {
                     //instantiate filled tile
-                    Instantiate(playerTileFilled, new Vector3(-START_DIVIDE_PLAYER
+                    Object obj = 
+                        Instantiate(playerTileFilled, new Vector3(-START_DIVIDE_PLAYER
                         + i * TILE_SPACE,(1 - j) * TILE_SPACE, 0), Quaternion.identity);
+                    obj.name = "playerTile" + i + j;
                 }
             }
         }
@@ -84,14 +99,18 @@ public class CombatArea : MonoBehaviour {
                 if (findEnemyGrid(i, j).occupied == 0)
                 {
                     //instantiate empty tile
-                    Instantiate(enemyTile, new Vector3(START_DIVIDE_ENEMY +
+                    Object obj = 
+                        Instantiate(enemyTile, new Vector3(START_DIVIDE_ENEMY +
                         i * TILE_SPACE, (1 - j) * TILE_SPACE, 0), Quaternion.identity);
+                    obj.name = "enemyTile" + i + j;
                 }
                 else
                 {
                     //instantiate filled tile
-                    Instantiate(enemyTileFilled, new Vector3(START_DIVIDE_ENEMY
+                    Object obj =
+                        Instantiate(enemyTileFilled, new Vector3(START_DIVIDE_ENEMY
                         + i * TILE_SPACE, (1 - j) * TILE_SPACE, 0), Quaternion.identity);
+                    obj.name = "enemyTile" + i + j;
                 }
             }
         }
