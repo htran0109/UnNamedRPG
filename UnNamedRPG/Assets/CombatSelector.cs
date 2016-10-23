@@ -3,6 +3,13 @@ using System.Collections;
 
 public class CombatSelector : MonoBehaviour {
 
+
+    public int selectMode = 0;
+
+    private bool modeLock = false;
+    private const int SELECT_MODE = 0;
+    private const int MOVE_MODE = 1;
+    private const int ATTACK_MODE = 2;
     private const float START_DIVIDE_PLAYER = 4f;
     private const float START_DIVIDE_ENEMY = .4f;
     private const float TILE_SPACE = 1.2f;
@@ -34,6 +41,8 @@ public class CombatSelector : MonoBehaviour {
 	void Update () {
         readKeys();
 	}
+
+
 
     private void readKeys()
     {
@@ -85,9 +94,12 @@ public class CombatSelector : MonoBehaviour {
         }
         if (Input.GetKeyDown(KeyCode.Z))
         {
+            Debug.Log("onPlayerSide is: " + playerSide);
             if(playerSide && playerSelected == null)
             {
                 playerGridSelect = combatArea.findPlayerGrid(horizPos, vertPos);
+                Debug.Log("Player at: " + playerGridSelect.getHorizPos() +
+                    ", " + playerGridSelect.getVertPos());
                 if (playerGridSelect.occupied!=0)
                 {
                     playerSelected = playerGridSelect.playersOnTile[0];
@@ -104,21 +116,30 @@ public class CombatSelector : MonoBehaviour {
             else if(!playerSide && playerSelected ==null)
             {
                 enemyGridSelect = combatArea.findEnemyGrid(horizPos, vertPos);
+                Debug.Log("Enemy at: " + enemyGridSelect.getHorizPos() +
+                          ", " + enemyGridSelect.getVertPos());
                 if(enemyGridSelect.occupied!=0)
                 {
                     enemySelected = enemyGridSelect.enemiesOnTile[0];
                 }
+                combatArea.deletePhysGrid();
+                combatArea.buildPhysGrid();
                 //TODO: run examine or something on enemy select
             }
             else if(!playerSide && playerSelected != null)
             {
                 enemyGridSelect = combatArea.findEnemyGrid(horizPos, vertPos);
-                if(enemyGridSelect.occupied!=0)
+                Debug.Log("EnemyGrid at: " + enemyGridSelect.getHorizPos() +
+                    ", " + enemyGridSelect.getVertPos());
+                if (enemyGridSelect.occupied!=0)
                 {
                     enemySelected = enemyGridSelect.enemiesOnTile[0];
                     playerSelected.hitEnemyRegular(enemySelected);
+                    Debug.Log("Enemy.health: " + enemySelected.health);
                 }
                 playerSelected = null;
+                combatArea.deletePhysGrid();
+                combatArea.buildPhysGrid();
             }
         }
     }

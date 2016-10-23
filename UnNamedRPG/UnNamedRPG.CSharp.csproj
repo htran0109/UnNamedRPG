@@ -66,6 +66,7 @@
     <Compile Include="Assets\CombatSelector.cs" />
     <Compile Include="Assets\Enemy.cs" />
     <Compile Include="Assets\EnemyGrid.cs" />
+    <Compile Include="Assets\GenericEnemy.cs" />
     <Compile Include="Assets\GenericPlayer.cs" />
     <Compile Include="Assets\Player.cs" />
     <Compile Include="Assets\PlayerGrid.cs" />

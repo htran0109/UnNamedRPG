@@ -24,13 +24,17 @@ public class Player
             if (Random.Range(0f, 100f) - (enemy.getDex() - this.getDex()) >= 10)
             //determine if hit, base percentage is 90% at even dexterity
             {
+                Debug.Log("Player hit");
                 enemy.health -= Mathf.Max((this.attack -
                                            enemy.getDef()), 1) * 10; //calc damage
+                if(enemy.health <= 0)
+                {
+                    enemy.position.removeEnemy(enemy);
+                }
             }
             else
             {
                 Debug.Log("Player missed");
-                attacked = true;
             }
 
         }

@@ -40,12 +40,14 @@ public class EnemyGrid : MonoBehaviour {
     public void fillEnemy(Enemy enemy)
     {
         enemiesOnTile.Add(enemy);
+        occupied++;
     }
 
     public bool removeEnemy(Enemy enemy)
     {
         if (enemiesOnTile.Contains(enemy)) {
             enemiesOnTile.Remove(enemy);
+            occupied--;
             return true;
         }
         else
@@ -53,4 +55,16 @@ public class EnemyGrid : MonoBehaviour {
             return false;
         }
     }
+
+    public int getHorizPos()
+    {
+        return horizPos;
+    }
+
+    public int getVertPos()
+    {
+        return vertPos;
+    }
+
+
 }

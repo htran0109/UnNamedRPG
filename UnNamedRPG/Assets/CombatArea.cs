@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class CombatArea : MonoBehaviour {
 
@@ -21,10 +22,9 @@ public class CombatArea : MonoBehaviour {
     private PlayerGrid[,] playerSide;
     private EnemyGrid[,] enemySide;
     private int sizeOfGrids = 3;
-    private Player firstPlayer;
-    private Player secondPlayer;
-    private Player thirdPlayer;
-    private Player fourthPlayer;
+    private List<Player> players;
+    private List<Enemy> enemies;
+    
     // Use this for initialization
     void Start () {
         //initialize grids
@@ -38,8 +38,12 @@ public class CombatArea : MonoBehaviour {
                 enemySide[i, j] = new EnemyGrid(i, j);
             }
         }
+        players = new List<Player>();
+        enemies = new List<Enemy>();
         formationMaking();
+        enemyMaking1();
         buildPhysGrid();
+
 	}
 	
 	// Update is called once per frame
@@ -49,8 +53,14 @@ public class CombatArea : MonoBehaviour {
 
     public void formationMaking()
     {
-        firstPlayer = new GenericPlayer(1, 0, 1, 1);
+        players.Add(new GenericPlayer(1, 0, 1, 1));
     }
+
+    public void enemyMaking1()
+    {
+        enemies.Add(new GenericEnemy(1, 0, 1, 1));
+    }
+
     public void deletePhysGrid()
     {
         for(int i = 0; i < sizeOfGrids; i++)
@@ -118,7 +128,6 @@ public class CombatArea : MonoBehaviour {
 
     public PlayerGrid findPlayerGrid(int horizPos, int vertPos)
     {
-        Debug.Log(horizPos + ", " + vertPos);
         if (horizPos <= RIGHT_HORIZ && vertPos <= DOWN_VERT)
         {
             return playerSide[horizPos,vertPos];
