@@ -1,18 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CombatSelector : MonoBehaviour {
+public class CombatSelector : MonoBehaviour
+{
 
 
     public int selectMode = 0;
     public GameObject moveButton;
     public GameObject attackButton;
+    public GameObject statusButton;
 
     private int modeLock = 0;
     private const int INITIAL_SELECT = 0;
     private const int MENU_SELECT = 1;
     private const int SECONDARY_SELECT = 2;
-    private const int SELECT_MODE = 0;
+    private const int STATUS_VIEW_SELECT = 3;
+    private const int STATUS_MODE = 0;
     private const int MOVE_MODE = 1;
     private const int ATTACK_MODE = 2;
     private const float START_DIVIDE_PLAYER = 4f;
@@ -34,58 +37,77 @@ public class CombatSelector : MonoBehaviour {
     private CombatArea combatArea;
 
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         transform.position = new Vector3(-START_DIVIDE_PLAYER, TILE_SPACE);
         horizPos = 0;
         vertPos = 0;
         playerSide = true;
         playerSelected = null;
         combatArea = GameObject.Find("CombatArea").GetComponent<CombatArea>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-        readKeys();
-	}
+    }
 
+    // Update is called once per frame
+    void Update()
+    {
+        readKeys();
+        cleanSlate();
+    }
+
+    private void cleanSlate()
+    {
+        if (modeLock == INITIAL_SELECT)
+        {
+            playerSelected = null;
+            enemySelected = null;
+        }
+        if(modeLock != MENU_SELECT)
+        {
+            if(GameObject.FindGameObjectsWithTag("buttons").Length > 0)
+            {
+                for(int i = 0; i < GameObject.FindGameObjectsWithTag("buttons").Length; i++)
+                {
+                    GameObject.Destroy(GameObject.FindGameObjectsWithTag("buttons")[i]);
+                }
+            }
+        }
+    }
 
 
     private void readKeys()
     {
-        if (modeLock == 1)
+        if (Input.GetKeyDown(KeyCode.X))
         {
-            if(Input.GetKeyDown(KeyCode.DownArrow))
-            {
-                if(selectMode < ATTACK_MODE)
-                {
-                    selectMode++;
-                    Debug.Log(selectMode);
-                }
-            }
-            if(Input.GetKeyDown(KeyCode.UpArrow))
-            {
-                if(selectMode > SELECT_MODE)
-                {
-                    selectMode--;
-                    Debug.Log(selectMode);
-                }
-            }
-            if(Input.GetKeyDown(KeyCode.Z))
-            {
-                modeLock = SECONDARY_SELECT;
-            }
+            modeLock = INITIAL_SELECT;
+            selectMode = STATUS_MODE;
+            Debug.Log("Resetting to Initial Select");
         }
-        else
-        {
-            tileMove();
-        }
-    }
-
-    private void tileMove()
-    {
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            if (vertPos > UP_VERT)
+            if (modeLock == MENU_SELECT)
+            {
+                if (selectMode > STATUS_MODE)
+                {
+                    selectMode--;
+                    if(selectMode == STATUS_MODE)
+                    {
+                        Debug.Log("Status");
+                    } 
+                    else if(selectMode == MOVE_MODE)
+                    {
+                        Debug.Log("Move");
+                    }
+                    else if(selectMode == ATTACK_MODE)
+                    {
+                        Debug.Log("Attack");
+                    }
+                }
+            }
+            else if(modeLock == STATUS_VIEW_SELECT)
+            {
+
+            }
+            else if (vertPos > UP_VERT)
             {
                 transform.Translate(new Vector3(0, TILE_SPACE, 0));
                 vertPos--;
@@ -94,7 +116,30 @@ public class CombatSelector : MonoBehaviour {
         }
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            if (vertPos < DOWN_VERT)
+            if (modeLock == MENU_SELECT)
+            {
+                if (selectMode < ATTACK_MODE)
+                {
+                    selectMode++;
+                    if (selectMode == STATUS_MODE)
+                    {
+                        Debug.Log("Status");
+                    }
+                    else if (selectMode == MOVE_MODE)
+                    {
+                        Debug.Log("Move");
+                    }
+                    else if (selectMode == ATTACK_MODE)
+                    {
+                        Debug.Log("Attack");
+                    }
+                }
+            }
+            else if (modeLock == STATUS_VIEW_SELECT)
+            {
+
+            }
+            else if (vertPos < DOWN_VERT)
             {
                 transform.Translate(new Vector3(0, -TILE_SPACE, 0));
                 vertPos++;
@@ -102,7 +147,15 @@ public class CombatSelector : MonoBehaviour {
         }
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            if (horizPos > LEFT_HORIZ)
+            if (modeLock == MENU_SELECT)
+            {
+
+            }
+            else if (modeLock == STATUS_VIEW_SELECT)
+            {
+
+            }
+            else if (horizPos > LEFT_HORIZ)
             {
                 transform.Translate(new Vector3(-TILE_SPACE, 0, 0));
                 horizPos--;
@@ -117,7 +170,15 @@ public class CombatSelector : MonoBehaviour {
         }
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            if (horizPos < RIGHT_HORIZ)
+            if(modeLock == MENU_SELECT)
+            {
+
+            }
+            else if (modeLock == STATUS_VIEW_SELECT)
+            {
+
+            }
+            else if (horizPos < RIGHT_HORIZ)
             {
                 transform.Translate(new Vector3(TILE_SPACE, 0, 0));
                 horizPos++;
@@ -132,8 +193,25 @@ public class CombatSelector : MonoBehaviour {
         }
         if (Input.GetKeyDown(KeyCode.Z))
         {
-            Debug.Log("onPlayerSide is: " + playerSide);
-            if (playerSide && playerSelected == null && modeLock == 0)
+            if (modeLock == MENU_SELECT)
+            {
+                if (selectMode != STATUS_MODE)
+                {
+                    modeLock = SECONDARY_SELECT;
+                    Debug.Log("Selecting Secondary Target");
+                }
+                else
+                {
+                    modeLock = STATUS_VIEW_SELECT;
+                    Debug.Log("Showing Status");
+                }
+            }
+
+            else if (modeLock == STATUS_VIEW_SELECT)
+            {
+                modeLock = INITIAL_SELECT;
+            }
+            else if (playerSide && playerSelected == null && modeLock == INITIAL_SELECT)
             {
                 playerGridSelect = combatArea.findPlayerGrid(horizPos, vertPos);
                 Debug.Log("Player at: " + playerGridSelect.getHorizPos() +
@@ -142,9 +220,27 @@ public class CombatSelector : MonoBehaviour {
                 {
                     playerSelected = playerGridSelect.playersOnTile[0];
                     modeLock = MENU_SELECT;
+                    GameObject new1 = GameObject.Instantiate(moveButton);
+                    new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+                    new1 = GameObject.Instantiate(attackButton);
+                    new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+                    new1 = GameObject.Instantiate(statusButton);
+                    new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+                    if (selectMode == STATUS_MODE)
+                    {
+                        Debug.Log("Status");
+                    }
+                    else if (selectMode == MOVE_MODE)
+                    {
+                        Debug.Log("Move");
+                    }
+                    else if (selectMode == ATTACK_MODE)
+                    {
+                        Debug.Log("Attack");
+                    }
                 }
             }
-            else if (playerSide && playerSelected != null && modeLock == 2)
+            else if (playerSide && playerSelected != null && modeLock == SECONDARY_SELECT && selectMode == MOVE_MODE)
             {
                 playerGridSelect = combatArea.findPlayerGrid(horizPos, vertPos);
                 playerSelected.moveTile(playerGridSelect);
@@ -153,7 +249,7 @@ public class CombatSelector : MonoBehaviour {
                 playerSelected = null;
                 modeLock = INITIAL_SELECT;
             }
-            else if (!playerSide && playerSelected == null && modeLock == 0)
+            else if (!playerSide && playerSelected == null && modeLock == INITIAL_SELECT)
             {
                 enemyGridSelect = combatArea.findEnemyGrid(horizPos, vertPos);
                 Debug.Log("Enemy at: " + enemyGridSelect.getHorizPos() +
@@ -161,13 +257,13 @@ public class CombatSelector : MonoBehaviour {
                 if (enemyGridSelect.occupied != 0)
                 {
                     enemySelected = enemyGridSelect.enemiesOnTile[0];
-                    modeLock = MENU_SELECT;
+                    modeLock = STATUS_VIEW_SELECT;
                 }
                 combatArea.deletePhysGrid();
                 combatArea.buildPhysGrid();
                 //TODO: run examine or something on enemy select
             }
-            else if (!playerSide && playerSelected != null && modeLock == 2)
+            else if (!playerSide && playerSelected != null && modeLock == SECONDARY_SELECT && selectMode == ATTACK_MODE)
             {
                 enemyGridSelect = combatArea.findEnemyGrid(horizPos, vertPos);
                 Debug.Log("EnemyGrid at: " + enemyGridSelect.getHorizPos() +
