@@ -6,9 +6,13 @@ public class CombatSelector : MonoBehaviour
 
 
     public int selectMode = 0;
-    public GameObject moveButton;
-    public GameObject attackButton;
     public GameObject statusButton;
+    public GameObject statusButtonHighlight;
+    public GameObject moveButton;
+    public GameObject moveButtonHighlight;
+    public GameObject attackButton;
+    public GameObject attackButtonHighlight;
+
 
     private int modeLock = 0;
     private const int INITIAL_SELECT = 0;
@@ -60,6 +64,7 @@ public class CombatSelector : MonoBehaviour
         {
             playerSelected = null;
             enemySelected = null;
+            selectMode = STATUS_MODE;
         }
         if(modeLock != MENU_SELECT)
         {
@@ -89,17 +94,39 @@ public class CombatSelector : MonoBehaviour
                 if (selectMode > STATUS_MODE)
                 {
                     selectMode--;
-                    if(selectMode == STATUS_MODE)
+                    for (int i = 0; i < GameObject.FindGameObjectsWithTag("buttons").Length; i++)
+                    {
+                        GameObject.Destroy(GameObject.FindGameObjectsWithTag("buttons")[i]);
+                    }
+                    if (selectMode == STATUS_MODE)
                     {
                         Debug.Log("Status");
+                        GameObject new1 = GameObject.Instantiate(statusButtonHighlight);
+                        new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+                        new1 = GameObject.Instantiate(moveButton);
+                        new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+                        new1 = GameObject.Instantiate(attackButton);
+                        new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
                     } 
                     else if(selectMode == MOVE_MODE)
                     {
                         Debug.Log("Move");
+                        GameObject new1 = GameObject.Instantiate(moveButtonHighlight);
+                        new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+                        new1 = GameObject.Instantiate(statusButton);
+                        new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+                        new1 = GameObject.Instantiate(attackButton);
+                        new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
                     }
                     else if(selectMode == ATTACK_MODE)
                     {
                         Debug.Log("Attack");
+                        GameObject new1 = GameObject.Instantiate(attackButtonHighlight);
+                        new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+                        new1 = GameObject.Instantiate(statusButton);
+                        new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+                        new1 = GameObject.Instantiate(moveButton);
+                        new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
                     }
                 }
             }
@@ -121,17 +148,39 @@ public class CombatSelector : MonoBehaviour
                 if (selectMode < ATTACK_MODE)
                 {
                     selectMode++;
+                    for (int i = 0; i < GameObject.FindGameObjectsWithTag("buttons").Length; i++)
+                    {
+                        GameObject.Destroy(GameObject.FindGameObjectsWithTag("buttons")[i]);
+                    }
                     if (selectMode == STATUS_MODE)
                     {
                         Debug.Log("Status");
+                        GameObject new1 = GameObject.Instantiate(statusButtonHighlight);
+                        new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+                        new1 = GameObject.Instantiate(moveButton);
+                        new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+                        new1 = GameObject.Instantiate(attackButton);
+                        new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
                     }
                     else if (selectMode == MOVE_MODE)
                     {
                         Debug.Log("Move");
+                        GameObject new1 = GameObject.Instantiate(moveButtonHighlight);
+                        new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+                        new1 = GameObject.Instantiate(statusButton);
+                        new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+                        new1 = GameObject.Instantiate(attackButton);
+                        new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
                     }
                     else if (selectMode == ATTACK_MODE)
                     {
                         Debug.Log("Attack");
+                        GameObject new1 = GameObject.Instantiate(attackButtonHighlight);
+                        new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+                        new1 = GameObject.Instantiate(statusButton);
+                        new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+                        new1 = GameObject.Instantiate(moveButton);
+                        new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
                     }
                 }
             }
@@ -220,12 +269,14 @@ public class CombatSelector : MonoBehaviour
                 {
                     playerSelected = playerGridSelect.playersOnTile[0];
                     modeLock = MENU_SELECT;
-                    GameObject new1 = GameObject.Instantiate(moveButton);
+                    Debug.Log("Status");
+                    GameObject new1 = GameObject.Instantiate(statusButtonHighlight);
+                    new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+                    new1 = GameObject.Instantiate(moveButton);
                     new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
                     new1 = GameObject.Instantiate(attackButton);
                     new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
-                    new1 = GameObject.Instantiate(statusButton);
-                    new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+
                     if (selectMode == STATUS_MODE)
                     {
                         Debug.Log("Status");
