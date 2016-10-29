@@ -12,6 +12,7 @@ public class CombatSelector : MonoBehaviour
     public GameObject moveButtonHighlight;
     public GameObject attackButton;
     public GameObject attackButtonHighlight;
+    public GameObject endButtonHighlight;
 
 
     private int modeLock = 0;
@@ -19,6 +20,7 @@ public class CombatSelector : MonoBehaviour
     private const int MENU_SELECT = 1;
     private const int SECONDARY_SELECT = 2;
     private const int STATUS_VIEW_SELECT = 3;
+    private const int END_TURN_SELECT = 4;
     private const int STATUS_MODE = 0;
     private const int MOVE_MODE = 1;
     private const int ATTACK_MODE = 2;
@@ -34,6 +36,8 @@ public class CombatSelector : MonoBehaviour
     private int horizPos = 0;
     private int vertPos = 0;
     private bool playerSide = true;
+    private bool playerTurn = true;
+    private int enemyTurn = 0;
     private PlayerGrid playerGridSelect = null;
     private Player playerSelected = null;
     private EnemyGrid enemyGridSelect = null;
@@ -66,7 +70,7 @@ public class CombatSelector : MonoBehaviour
             enemySelected = null;
             selectMode = STATUS_MODE;
         }
-        if(modeLock != MENU_SELECT)
+        if(modeLock == INITIAL_SELECT || modeLock == SECONDARY_SELECT)
         {
             if(GameObject.FindGameObjectsWithTag("buttons").Length > 0)
             {
@@ -83,9 +87,17 @@ public class CombatSelector : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.X))
         {
-            modeLock = INITIAL_SELECT;
-            selectMode = STATUS_MODE;
-            Debug.Log("Resetting to Initial Select");
+            if (modeLock != INITIAL_SELECT)
+            {
+                modeLock = INITIAL_SELECT;
+                selectMode = STATUS_MODE;
+                Debug.Log("Resetting to Initial Select");
+            }
+            else {
+                modeLock = END_TURN_SELECT;
+                GameObject new1 = GameObject.Instantiate(endButtonHighlight);
+                new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+            }
         }
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
@@ -131,6 +143,10 @@ public class CombatSelector : MonoBehaviour
                 }
             }
             else if(modeLock == STATUS_VIEW_SELECT)
+            {
+
+            }
+            else if(modeLock == END_TURN_SELECT)
             {
 
             }
@@ -188,6 +204,10 @@ public class CombatSelector : MonoBehaviour
             {
 
             }
+            else if (modeLock == END_TURN_SELECT)
+            {
+
+            }
             else if (vertPos < DOWN_VERT)
             {
                 transform.Translate(new Vector3(0, -TILE_SPACE, 0));
@@ -201,6 +221,10 @@ public class CombatSelector : MonoBehaviour
 
             }
             else if (modeLock == STATUS_VIEW_SELECT)
+            {
+
+            }
+            else if (modeLock == END_TURN_SELECT)
             {
 
             }
@@ -224,6 +248,10 @@ public class CombatSelector : MonoBehaviour
 
             }
             else if (modeLock == STATUS_VIEW_SELECT)
+            {
+
+            }
+            else if (modeLock == END_TURN_SELECT)
             {
 
             }
@@ -258,6 +286,11 @@ public class CombatSelector : MonoBehaviour
 
             else if (modeLock == STATUS_VIEW_SELECT)
             {
+                modeLock = INITIAL_SELECT;
+            }
+            else if (modeLock == END_TURN_SELECT)
+            {
+                playerTurn = false;
                 modeLock = INITIAL_SELECT;
             }
             else if (playerSide && playerSelected == null && modeLock == INITIAL_SELECT)

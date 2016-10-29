@@ -36,6 +36,7 @@ public class Player
             {
                 Debug.Log("Player missed");
             }
+            attacked = true;
 
         }
         else
@@ -69,6 +70,7 @@ public class Player
                 newPos.fillPlayer(this);
                 this.position = newPos;
                 Debug.Log("Moved");
+                moved = true;
                 return true;
             }
             else
