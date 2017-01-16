@@ -12,8 +12,10 @@ public class CombatSelector : MonoBehaviour
     public GameObject moveButtonHighlight;
     public GameObject attackButton;
     public GameObject attackButtonHighlight;
+    public GameObject endButton;
     public GameObject endButtonHighlight;
-
+    public GameObject cancelButton;
+    public GameObject cancelButtonHighlight;
 
     private int modeLock = 0;
     private const int INITIAL_SELECT = 0;
@@ -24,6 +26,8 @@ public class CombatSelector : MonoBehaviour
     private const int STATUS_MODE = 0;
     private const int MOVE_MODE = 1;
     private const int ATTACK_MODE = 2;
+    private const int END_TURN_MODE = 1;
+    private const int CANCEL_END_MODE = 0;
     private const float START_DIVIDE_PLAYER = 4f;
     private const float START_DIVIDE_ENEMY = .4f;
     private const float TILE_SPACE = 1.2f;
@@ -95,7 +99,11 @@ public class CombatSelector : MonoBehaviour
             }
             else {
                 modeLock = END_TURN_SELECT;
-                GameObject new1 = GameObject.Instantiate(endButtonHighlight);
+                selectMode = CANCEL_END_MODE;
+                //ready end turn menu
+                GameObject new1 = GameObject.Instantiate(endButton);
+                new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+                new1 = GameObject.Instantiate(cancelButtonHighlight);
                 new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
             }
         }
@@ -148,7 +156,30 @@ public class CombatSelector : MonoBehaviour
             }
             else if(modeLock == END_TURN_SELECT)
             {
-
+                if (selectMode > CANCEL_END_MODE)
+                {
+                    selectMode--;
+                    for (int i = 0; i < GameObject.FindGameObjectsWithTag("buttons").Length; i++)
+                    {
+                        GameObject.Destroy(GameObject.FindGameObjectsWithTag("buttons")[i]);
+                    }
+                    if (selectMode == END_TURN_MODE) //switch to highlighted end turn
+                    {
+                        Debug.Log("End Turn");
+                        GameObject new1 = GameObject.Instantiate(endButtonHighlight);
+                        new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+                        new1 = GameObject.Instantiate(cancelButton);
+                        new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+                    }
+                    else if(selectMode == CANCEL_END_MODE)
+                    {
+                        Debug.Log("Cancel");
+                        GameObject new1 = GameObject.Instantiate(cancelButtonHighlight);
+                        new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+                        new1 = GameObject.Instantiate(endButton);
+                        new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+                    }
+                }
             }
             else if (vertPos > UP_VERT)
             {
@@ -206,7 +237,30 @@ public class CombatSelector : MonoBehaviour
             }
             else if (modeLock == END_TURN_SELECT)
             {
-
+                if (selectMode < END_TURN_MODE)//room to move down
+                {
+                    selectMode++;
+                    for (int i = 0; i < GameObject.FindGameObjectsWithTag("buttons").Length; i++)
+                    {
+                        GameObject.Destroy(GameObject.FindGameObjectsWithTag("buttons")[i]);
+                    }
+                    if (selectMode == END_TURN_MODE) //switch to highlighted end turn
+                    {
+                        Debug.Log("End Turn");
+                        GameObject new1 = GameObject.Instantiate(endButtonHighlight);
+                        new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+                        new1 = GameObject.Instantiate(cancelButton);
+                        new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+                    }
+                    else if (selectMode == CANCEL_END_MODE) //switch to highlighted end turn
+                    {
+                        Debug.Log("Cancel");
+                        GameObject new1 = GameObject.Instantiate(cancelButtonHighlight);
+                        new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+                        new1 = GameObject.Instantiate(endButton);
+                        new1.transform.SetParent(GameObject.Find("CombatCanvas").transform);
+                    }
+                }
             }
             else if (vertPos < DOWN_VERT)
             {
@@ -290,8 +344,14 @@ public class CombatSelector : MonoBehaviour
             }
             else if (modeLock == END_TURN_SELECT)
             {
-                playerTurn = false;
-                modeLock = INITIAL_SELECT;
+                if (selectMode == END_TURN_MODE) {//end turn pressed
+                  playerTurn = false;
+                  modeLock = INITIAL_SELECT;
+                }
+                else
+                {//cancel pressed
+                    modeLock = INITIAL_SELECT;
+                }
             }
             else if (playerSide && playerSelected == null && modeLock == INITIAL_SELECT)
             {
