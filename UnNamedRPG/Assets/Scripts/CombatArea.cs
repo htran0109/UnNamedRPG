@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class CombatArea : MonoBehaviour {
 
@@ -22,8 +23,8 @@ public class CombatArea : MonoBehaviour {
     private PlayerGrid[,] playerSide;
     private EnemyGrid[,] enemySide;
     private int sizeOfGrids = 3;
-    private List<Player> players;
-    private List<Enemy> enemies;
+    public List<Player> players;
+    public List<Enemy> enemies;
     
     // Use this for initialization
     void Start () {
@@ -48,7 +49,10 @@ public class CombatArea : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+	    if(enemies.Count == 0)
+        {
+            SceneManager.LoadScene("ExploreScene");
+        }
 	}
 
     public void formationMaking()

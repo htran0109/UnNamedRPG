@@ -346,6 +346,11 @@ public class CombatSelector : MonoBehaviour
             {
                 if (selectMode == END_TURN_MODE) {//end turn pressed
                   playerTurn = false;
+                    for (int i = 0; i < combatArea.players.Count; i++)
+                    {
+                        combatArea.players[i].attacked = false;
+                        combatArea.players[i].moved = false;
+                    }
                   modeLock = INITIAL_SELECT;
                 }
                 else
