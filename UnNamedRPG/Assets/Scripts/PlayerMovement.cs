@@ -1,8 +1,9 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MoveController : MonoBehaviour {
+public class PlayerMovement : MonoBehaviour {
 
     GameObject mainCamera;
     Camera innerCamera;
@@ -14,12 +15,10 @@ public class MoveController : MonoBehaviour {
     public float moveSpeed = .05f;
     public int rayLayerMask;
     public UnityEngine.UI.Text textBox;
+    Rigidbody rb;
 	// Use this for initialization
 	void Start () {
-        mainCamera = GameObject.Find("Main Camera");
-        textBox = GameObject.Find("TextBox").GetComponent<UnityEngine.UI.Text>();
-        Debug.Log(textBox);
-        innerCamera = (Camera)mainCamera.GetComponent("Camera");
+        rb = gameObject.GetComponent<Rigidbody>();
         rayLayerMask = LayerMask.GetMask("UI");
         rayLayerMask = ~rayLayerMask;
     }
@@ -31,56 +30,67 @@ public class MoveController : MonoBehaviour {
 
     void readKeys()
     {
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            moveSpeed = 10;
+        }
+        else
+        {
+            moveSpeed = 5;
+        }
+        float horz = Input.GetAxis("Horizontal");
+        rb.velocity = new Vector3(horz * moveSpeed, rb.velocity.y, 0);
+        float vert = Input.GetAxis("Vertical");
+        rb.velocity = new Vector3(rb.velocity.x, vert * moveSpeed, 0);
+        //Debug.Log("Inputs: " + horz + ": " + vert);
 
-        /*Vector3 rayOrigin;
+        Vector3 rayOrigin;
         RaycastHit hit;
 
         if (Input.GetKey(KeyCode.UpArrow))
         {
-            
+
             direction = FACE_UP;
         }
         if (Input.GetKey(KeyCode.DownArrow))
         {
-            
+
             direction = FACE_DOWN;
         }
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            
+
             direction = FACE_LEFT;
         }
         if (Input.GetKey(KeyCode.RightArrow))
         {
-            
+
             direction = FACE_RIGHT;
         }
         if (Input.GetKeyDown(KeyCode.Z))
         {
             Debug.Log("Pressed confirm: " + rayLayerMask);
-            if(direction == FACE_LEFT)
+            rayOrigin = transform.position;
+            Vector3 rayDirection;
+            if (direction == FACE_LEFT)
             {
-                rayOrigin = innerCamera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0f));
-                rayOrigin = new Vector3(rayOrigin.x - 1.0f, rayOrigin.y, rayOrigin.z);
+                rayDirection = new Vector3(-2, 0, 0);
             }
             else if (direction == FACE_RIGHT)
             {
-                rayOrigin = innerCamera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0f));
-                rayOrigin = new Vector3(rayOrigin.x + 1.0f, rayOrigin.y, rayOrigin.z);
+                rayDirection = new Vector3(2, 0, 0);
             }
             else if (direction == FACE_DOWN)
             {
-                rayOrigin = innerCamera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0f));
-                rayOrigin = new Vector3(rayOrigin.x, rayOrigin.y - 1.0f, rayOrigin.z);
+                rayDirection = new Vector3(0, -2, 0);
             }
             else
             {
-                rayOrigin = innerCamera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0f));
-                rayOrigin = new Vector3(rayOrigin.x, rayOrigin.y + 1.0f, rayOrigin.z);
+                rayDirection = new Vector3(0, 2, 0);   
             }
-            Debug.Log(rayOrigin);
-            Debug.Log(innerCamera.transform.forward);
-            if (Physics.Raycast(rayOrigin, innerCamera.transform.forward, out hit, 1000f, rayLayerMask)) 
+            Debug.Log(rayOrigin + ": " + rayDirection);
+            Debug.DrawRay(rayOrigin, rayDirection, Color.black, 1.0f, true);
+            if (Physics.Raycast(rayOrigin, rayDirection, out hit, 1.2f, rayLayerMask))
             {
                 Debug.Log("Raycast Hit Something (Confirm button pressed)");
                 if (hit.collider.tag == "NPC")
@@ -88,26 +98,46 @@ public class MoveController : MonoBehaviour {
                     Debug.Log("Raycast Hit NPC");
                     NPCHit(hit.collider);
                 }
+                else if(hit.collider.tag == "Door")
+                {
+                    Debug.Log("Raycast Hit Door");
+                    DoorHit(hit.collider);
+                }
                 else
                 {
                     Debug.Log(hit.collider.tag);
                 }
             }
-        }*/
+        }
     }
+
+    
+
+        
 
     public void NPCHit(Collider coll)
     {
-        if(coll.gameObject.name == "Villager1")
+        if (coll.gameObject.name == "Villager1")
         {
             Debug.Log("Example Villager 1");
             textBox.text = "Example Villager 1 Clicked";
         }
-        else if(coll.gameObject.name == "Villager2")
+        else if (coll.gameObject.name == "Villager2")
         {
             Debug.Log("Example Villager 2");
             textBox.text = "Example Villager 2 Clicked";
             SceneManager.LoadScene("CombatScene");
+        }
+        
+    }
+
+    public void DoorHit(Collider coll)
+    {
+        if(coll.gameObject.name == "Door1")
+        {
+            Debug.Log("Example Door 1");
+            textBox.text = "Entered Door 1";
+            SceneManager.LoadScene("ExploreScene");
         }
     }
 }
