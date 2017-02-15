@@ -14,6 +14,7 @@ public class MoveController : MonoBehaviour {
     public float moveSpeed = .05f;
     public int rayLayerMask;
     public UnityEngine.UI.Text textBox;
+    public static int doorEntered;
 	// Use this for initialization
 	void Start () {
         mainCamera = GameObject.Find("Main Camera");

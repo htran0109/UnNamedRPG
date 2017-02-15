@@ -21,6 +21,7 @@ public class PlayerMovement : MonoBehaviour {
         rb = gameObject.GetComponent<Rigidbody>();
         rayLayerMask = LayerMask.GetMask("UI");
         rayLayerMask = ~rayLayerMask;
+        textBox = GameObject.FindGameObjectWithTag("Text").GetComponent<UnityEngine.UI.Text>();
     }
 	
 	// Update is called once per frame
@@ -133,11 +134,47 @@ public class PlayerMovement : MonoBehaviour {
 
     public void DoorHit(Collider coll)
     {
-        if(coll.gameObject.name == "Door1")
+        if(coll.gameObject.name == "Door1a")
         {
             Debug.Log("Example Door 1");
             textBox.text = "Entered Door 1";
+            MoveController.doorEntered = 1;
             SceneManager.LoadScene("ExploreScene");
+        }
+        if(coll.gameObject.name == "Door1b")
+        {
+            Debug.Log("Example Door 1");
+            textBox.text = "Entered Door 1";
+            MoveController.doorEntered = 2;
+            SceneManager.LoadScene("ExploreScene");
+        }
+        if(coll.gameObject.name == "Door2a")
+        {
+            Debug.Log("Example Door 2");
+            textBox.text = "Entered Door 2";
+            MoveController.doorEntered = 1;
+            SceneManager.LoadScene("DoorScene1");
+        }
+        if (coll.gameObject.name == "Door2b")
+        {
+            Debug.Log("Example Door 2");
+            textBox.text = "Entered Door 2";
+            MoveController.doorEntered = 2;
+            SceneManager.LoadScene("DoorScene1");
+        }
+        if (coll.gameObject.name == "Door3")
+        {
+            Debug.Log("Example Door 3");
+            textBox.text = "Entered Door 3";
+            MoveController.doorEntered = 1;
+            SceneManager.LoadScene("DoorScene2");
+        }
+        if (coll.gameObject.name == "Door4")
+        {
+            Debug.Log("Example Door 4");
+            textBox.text = "Entered Door 4";
+            MoveController.doorEntered = 1;
+            SceneManager.LoadScene("TutorialScene");
         }
     }
 }
